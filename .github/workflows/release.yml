@@ -81,22 +81,3 @@ jobs:
           asset_path: swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz.sha256
           asset_name: swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz.sha256
           asset_content_type: text/plain
-  build_image:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: docker/setup-qemu-action@v1
-      - uses: docker/setup-buildx-action@v1
-      - uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/build-push-action@v2
-        with:
-          context: .
-          platforms: linux/amd64
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/xcode:12.4
-            ghcr.io/${{ github.repository_owner }}/xcode:12.4-focal
