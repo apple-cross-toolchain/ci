@@ -16,7 +16,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
   build_ported_tools:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: create_release
     steps:
       - uses: actions/checkout@v2
