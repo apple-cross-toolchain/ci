@@ -5,30 +5,47 @@
 
 set -euo pipefail
 
-curl -LO https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.6/clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04.tar.xz
-tar -xf clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04.tar.xz
-pushd clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04
+clang_tarball_root="LLVM-22.1.0-Linux-X64"
+clang_tarball_file="${clang_tarball_root}.tar.xz"
+clang_tarball_url="https://github.com/llvm/llvm-project/releases/download/llvmorg-22.1.0/${clang_tarball_file}"
+
+curl -LO "${clang_tarball_url}"
+tar -xf "${clang_tarball_file}"
+pushd "${clang_tarball_root}"
 mkdir bin-new
-mv \
-  bin/clang \
-  bin/clang++ \
-  bin/clang-17 \
-  bin/ld.lld \
-  bin/ld64.lld \
-  bin/lld \
-  bin/llvm-nm \
-  bin-new
+for tool in clang clang++ ld.lld ld64.lld lld llvm-nm; do
+  if [[ -e "bin/${tool}" ]]; then
+    mv "bin/${tool}" bin-new
+  fi
+done
+
+# Keep whichever versioned clang binary this LLVM release provides.
+versioned_clang="$(find bin -maxdepth 1 -type f -name 'clang-[0-9]*' | head -n 1)"
+if [[ -n "${versioned_clang}" ]]; then
+  mv "${versioned_clang}" bin-new
+fi
+
 rm -rf bin lib libexec include share local
 mv bin-new bin
 if command -v strip >/dev/null 2>&1; then
-  if strip --help 2>&1 | grep -q -- "--strip-debug"; then
-    strip --strip-debug bin/clang-17 bin/lld bin/llvm-nm
-  else
-    strip bin/clang-17 bin/lld bin/llvm-nm || true
+  strip_targets=()
+  for candidate in bin/*; do
+    if [[ -f "${candidate}" && -x "${candidate}" ]]; then
+      strip_targets+=("${candidate}")
+    fi
+  done
+
+  if [[ ${#strip_targets[@]} -gt 0 ]]; then
+    if strip --help 2>&1 | grep -q -- "--strip-debug"; then
+      strip --strip-debug "${strip_targets[@]}"
+    else
+      strip "${strip_targets[@]}" || true
+    fi
   fi
 fi
 popd
-if ! tar -I "xz -T0 -9e" -cf clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04-stripped.tar.xz clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04; then
-  XZ_OPT="-9e -T0" tar -Jcf clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04-stripped.tar.xz clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04
+stripped_tarball_file="${clang_tarball_root}-stripped.tar.xz"
+if ! tar -I "xz -T0 -9e" -cf "${stripped_tarball_file}" "${clang_tarball_root}"; then
+  XZ_OPT="-9e -T0" tar -Jcf "${stripped_tarball_file}" "${clang_tarball_root}"
 fi
-sha256sum clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04-stripped.tar.xz > clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04-stripped.tar.xz.sha256
+sha256sum "${stripped_tarball_file}" > "${stripped_tarball_file}.sha256"

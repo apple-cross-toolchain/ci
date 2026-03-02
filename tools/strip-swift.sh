@@ -5,9 +5,13 @@
 
 set -euo pipefail
 
-curl -LO https://download.swift.org/swift-6.2.3-release/ubuntu2204/swift-6.2.3-RELEASE/swift-6.2.3-RELEASE-ubuntu22.04.tar.gz
-tar -xf swift-6.2.3-RELEASE-ubuntu22.04.tar.gz
-pushd swift-6.2.3-RELEASE-ubuntu22.04/usr
+swift_tarball_root="swift-6.2.3-RELEASE-ubuntu24.04"
+swift_tarball_file="${swift_tarball_root}.tar.gz"
+swift_tarball_url="https://download.swift.org/swift-6.2.3-release/ubuntu2404/swift-6.2.3-RELEASE/${swift_tarball_file}"
+
+curl -LO "${swift_tarball_url}"
+tar -xf "${swift_tarball_file}"
+pushd "${swift_tarball_root}/usr"
 mkdir bin-new
 mv bin/swift-driver bin/swift-package bin-new
 ln -s swift-driver bin-new/swift
@@ -23,7 +27,8 @@ if command -v strip >/dev/null 2>&1; then
   fi
 fi
 popd
-if ! tar -I "xz -T0 -9e" -cf swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz swift-6.2.3-RELEASE-ubuntu22.04; then
-  XZ_OPT="-9e -T0" tar -Jcf swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz swift-6.2.3-RELEASE-ubuntu22.04
+stripped_tarball_file="${swift_tarball_root}-stripped.tar.xz"
+if ! tar -I "xz -T0 -9e" -cf "${stripped_tarball_file}" "${swift_tarball_root}"; then
+  XZ_OPT="-9e -T0" tar -Jcf "${stripped_tarball_file}" "${swift_tarball_root}"
 fi
-sha256sum swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz > swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz.sha256
+sha256sum "${stripped_tarball_file}" > "${stripped_tarball_file}.sha256"
