@@ -15,7 +15,15 @@ ln -s swift-driver bin-new/swiftc
 ln -s swift-package bin-new/swift-build
 rm -rf bin lib libexec include share local
 mv bin-new bin
-strip bin/swift-driver bin/swift-package
+if command -v strip >/dev/null 2>&1; then
+  if strip --help 2>&1 | grep -q -- "--strip-debug"; then
+    strip --strip-debug bin/swift-driver bin/swift-package
+  else
+    strip bin/swift-driver bin/swift-package || true
+  fi
+fi
 popd
-tar -Jcf swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz swift-6.2.3-RELEASE-ubuntu22.04
+if ! tar -I "xz -T0 -9e" -cf swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz swift-6.2.3-RELEASE-ubuntu22.04; then
+  XZ_OPT="-9e -T0" tar -Jcf swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz swift-6.2.3-RELEASE-ubuntu22.04
+fi
 sha256sum swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz > swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz.sha256

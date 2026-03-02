@@ -20,7 +20,15 @@ mv \
   bin-new
 rm -rf bin lib libexec include share local
 mv bin-new bin
-strip bin/clang-17 bin/lld bin/llvm-nm
+if command -v strip >/dev/null 2>&1; then
+  if strip --help 2>&1 | grep -q -- "--strip-debug"; then
+    strip --strip-debug bin/clang-17 bin/lld bin/llvm-nm
+  else
+    strip bin/clang-17 bin/lld bin/llvm-nm || true
+  fi
+fi
 popd
-tar -Jcf clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04-stripped.tar.xz clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04
+if ! tar -I "xz -T0 -9e" -cf clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04-stripped.tar.xz clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04; then
+  XZ_OPT="-9e -T0" tar -Jcf clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04-stripped.tar.xz clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04
+fi
 sha256sum clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04-stripped.tar.xz > clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04-stripped.tar.xz.sha256
