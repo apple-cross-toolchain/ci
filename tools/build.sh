@@ -8,17 +8,18 @@ PROJECT_ROOT="$(cd "${SCRIPT_ROOT}/.." && pwd)"
 sudo apt update -qq
 DEBIAN_FRONTEND="noninteractive" sudo apt install -qqy --no-install-recommends \
   doxygen zip build-essential curl git cmake zlib1g-dev libpng-dev libxml2-dev \
-  gobjc python vim-tiny ca-certificates ninja-build patchelf
+  gobjc python3 python-is-python3 vim-tiny ca-certificates ninja-build patchelf \
+  clang
 
 mkdir -p out/lib out/bin
 
-git clone https://github.com/apple-cross-toolchain/xcbuild.git
-pushd xcbuild
-git checkout 5d2947b1db0a6ea77db6e5c90da0256400230343
-bazel build //Libraries:xcbuild
-tar -xf bazel-bin/Libraries/xcbuild.tar.xz -C "$PROJECT_ROOT/out/bin"
+git clone https://github.com/apple-cross-toolchain/xcbuild-rust.git
+pushd xcbuild-rust
+git checkout 9173412d86270a2d026f7c1f49f7da6a1e1b8bae
+cargo build --release
+find target/release -maxdepth 1 -type f -executable -exec cp {} "$PROJECT_ROOT/out/bin" \;
 popd
-rm -rf xcbuild
+rm -rf xcbuild-rust
 
 curl -L https://sourceforge.net/projects/pmt/files/pngcrush/1.8.13/pngcrush-1.8.13.tar.gz/download -o pngcrush.tar.gz
 tar -xf pngcrush.tar.gz
@@ -28,15 +29,6 @@ make -j$(nproc)
 mv pngcrush "$PROJECT_ROOT/out/bin"
 popd
 rm -rf pngcrush-1.8.13
-
-# We only need sw_vers from this
-git clone https://github.com/tpoechtrager/osxcross.git
-pushd osxcross/wrapper
-git checkout 9a2c6e344fdc06e1e46726e19956fbdb7f3ccd61
-make -j$(nproc) wrapper
-cp -a wrapper "$PROJECT_ROOT/out/bin/sw_vers"
-popd
-rm -rf osxcross
 
 git clone https://github.com/tpoechtrager/apple-libtapi.git
 pushd apple-libtapi
