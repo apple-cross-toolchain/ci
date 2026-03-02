@@ -45,7 +45,12 @@ if command -v strip >/dev/null 2>&1; then
 fi
 popd
 stripped_tarball_file="${clang_tarball_root}-stripped.tar.xz"
-if ! tar -I "xz -T0 -9e" -cf "${stripped_tarball_file}" "${clang_tarball_root}"; then
-  XZ_OPT="-9e -T0" tar -Jcf "${stripped_tarball_file}" "${clang_tarball_root}"
+xz_opts="-9e -T0"
+if xz --help 2>&1 | grep -q -- "--x86"; then
+  xz_opts="${xz_opts} --x86"
+fi
+
+if ! tar -I "xz ${xz_opts}" -cf "${stripped_tarball_file}" "${clang_tarball_root}"; then
+  XZ_OPT="${xz_opts}" tar -Jcf "${stripped_tarball_file}" "${clang_tarball_root}"
 fi
 sha256sum "${stripped_tarball_file}" > "${stripped_tarball_file}.sha256"
