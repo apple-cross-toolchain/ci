@@ -48,16 +48,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04-stripped.tar.xz
-          asset_name: clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04-stripped.tar.xz
+          asset_path: clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04-stripped.tar.xz
+          asset_name: clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04-stripped.tar.xz
           asset_content_type: application/x-xz
       - uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04-stripped.tar.xz.sha256
-          asset_name: clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04-stripped.tar.xz.sha256
+          asset_path: clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04-stripped.tar.xz.sha256
+          asset_name: clang+llvm-17.0.6-x86_64-linux-gnu-ubuntu-22.04-stripped.tar.xz.sha256
           asset_content_type: text/plain
   strip_swift:
     runs-on: ubuntu-latest
@@ -70,16 +70,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: swift-5.3.3-RELEASE-ubuntu20.04-stripped.tar.xz
-          asset_name: swift-5.3.3-RELEASE-ubuntu20.04-stripped.tar.xz
+          asset_path: swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz
+          asset_name: swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz
           asset_content_type: application/x-xz
       - uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: swift-5.3.3-RELEASE-ubuntu20.04-stripped.tar.xz.sha256
-          asset_name: swift-5.3.3-RELEASE-ubuntu20.04-stripped.tar.xz.sha256
+          asset_path: swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz.sha256
+          asset_name: swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz.sha256
           asset_content_type: text/plain
   build_image:
     runs-on: ubuntu-latest

@@ -5,9 +5,9 @@
 
 set -euo pipefail
 
-curl -LO https://download.swift.org/swift-5.5.1-release/ubuntu2004/swift-5.5.1-RELEASE/swift-5.5.1-RELEASE-ubuntu20.04.tar.gz
-tar -xf swift-5.5.1-RELEASE-ubuntu20.04.tar.gz
-pushd swift-5.5.1-RELEASE-ubuntu20.04/usr
+curl -LO https://download.swift.org/swift-6.2.3-release/ubuntu2204/swift-6.2.3-RELEASE/swift-6.2.3-RELEASE-ubuntu22.04.tar.gz
+tar -xf swift-6.2.3-RELEASE-ubuntu22.04.tar.gz
+pushd swift-6.2.3-RELEASE-ubuntu22.04/usr
 mkdir bin-new
 mv \
   bin/swift \
@@ -17,5 +17,5 @@ mv \
 rm -rf bin lib libexec include share
 mv bin-new bin
 popd
-tar -Jcf swift-5.5.1-RELEASE-ubuntu20.04-stripped.tar.xz swift-5.5.1-RELEASE-ubuntu20.04
-sha256sum swift-5.5.1-RELEASE-ubuntu20.04-stripped.tar.xz > swift-5.5.1-RELEASE-ubuntu20.04-stripped.tar.xz.sha256
+tar -Jcf swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz swift-6.2.3-RELEASE-ubuntu22.04
+sha256sum swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz > swift-6.2.3-RELEASE-ubuntu22.04-stripped.tar.xz.sha256
