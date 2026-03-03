@@ -15,7 +15,7 @@ mkdir -p out/lib out/bin
 
 git clone https://github.com/apple-cross-toolchain/xcbuild-rust.git
 pushd xcbuild-rust
-git checkout d6839669dea9d111e02ce28b545bc695741830c2
+git checkout aeef77013f26d89d7b19247ccc3f74b6bdb29929
 cargo build --release
 find target/release -maxdepth 1 -type f -executable -exec cp {} "$PROJECT_ROOT/out/bin" \;
 popd
