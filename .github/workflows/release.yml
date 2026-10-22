@@ -16,7 +16,14 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
   build_ported_tools:
-    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: aarch64
+    runs-on: ${{ matrix.runner }}
     needs: create_release
     steps:
       - uses: actions/checkout@v2
@@ -26,16 +33,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: out/ported-tools-linux-x86_64.tar.xz
-          asset_name: ported-tools-linux-x86_64.tar.xz
+          asset_path: out/ported-tools-linux-${{ matrix.arch }}.tar.xz
+          asset_name: ported-tools-linux-${{ matrix.arch }}.tar.xz
           asset_content_type: application/x-xz
       - uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: out/ported-tools-linux-x86_64.tar.xz.sha256
-          asset_name: ported-tools-linux-x86_64.tar.xz.sha256
+          asset_path: out/ported-tools-linux-${{ matrix.arch }}.tar.xz.sha256
+          asset_name: ported-tools-linux-${{ matrix.arch }}.tar.xz.sha256
           asset_content_type: text/plain
   strip_clang:
     runs-on: ubuntu-latest
