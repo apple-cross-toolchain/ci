@@ -2,9 +2,13 @@ on:
   push:
     branches:
       - main
+  pull_request:
 jobs:
   build_ported_tools:
-    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v2
       - run: tools/build.sh
